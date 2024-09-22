@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">Eventure</string>
+    <string name="welcome_msg">Welcome to Eventure</string>
+    <string name="email_login">Enter your email address</string>
+    <string name="password_login">Enter your password</string>
+    <string name="login">Login</string>
+    <string name="create_account">Don\'t have an account?</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="create_account_msg">Create an account</string>
+    <string name="login_msg">Have an account?</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
 </resources>
