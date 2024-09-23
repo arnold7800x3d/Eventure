@@ -13,18 +13,20 @@
         android:theme="@style/Theme.Eventure"
         tools:targetApi="31">
         <activity
-            android:name=".activities.homeActivity"
-            android:exported="false"
-            android:label="@string/title_activity_home" />
+            android:name=".activities.HomeActivity"
+            android:exported="false"/>
         <activity
-            android:name=".activities.registerActivity"
+            android:name=".activities.RegisterActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.loginActivity"
-            android:exported="false" />
-        <activity
-            android:name=".activities.register"
-            android:exported="false" />
+            android:name=".activities.LoginActivity"
+            android:exported="true" >
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+        </activity>
     </application>
 
 </manifest>

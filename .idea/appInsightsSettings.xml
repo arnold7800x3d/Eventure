@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.example.eventure" />
+                  <option name="mobileSdkAppId" value="1:518600812516:android:a9fbd0902071ca60d009f1" />
+                  <option name="projectId" value="eventure-96c2f" />
+                  <option name="projectNumber" value="518600812516" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
