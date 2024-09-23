@@ -12,8 +12,10 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.databinding.DataBindingUtil
 import com.example.eventure.R
 import com.example.eventure.databinding.ActivityRegisterBinding
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.auth
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -21,12 +23,26 @@ class RegisterActivity : AppCompatActivity() {
     lateinit var binding: ActivityRegisterBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        auth = Firebase.auth
+
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         binding = DataBindingUtil.setContentView(this, R.layout.activity_register)
-//        binding.signUpButton2.setOnClickListener {
-//            createUser()
-//        }
+
+        //bind sign up action to button
+        binding.signUpButton2.setOnClickListener {
+            createUser(
+                binding.emailSignUp.text.toString().trim(),
+                binding.passwordSignUp.toString().trim()
+            )
+        }
+
+        //bind login action to button
+        binding.loginButton2.setOnClickListener {
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+        }
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -35,9 +51,9 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
 
-    private fun createUser() {
-        val email = binding.emailSignUp.text.toString()
-        val password = binding.passwordSignUp.toString()
+    private fun createUser(email:String, password: String) {
+//        val email = binding.emailSignUp.text.toString()
+//        val password = binding.passwordSignUp.toString()
 
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) {task ->
@@ -55,17 +71,7 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun updateUI(user: FirebaseUser?) {
-        binding.signUpButton2.setOnClickListener {
-            val intent = Intent(this, HomeActivity::class.java)
-            startActivity(intent)
-        }
+        val intent = Intent(this, HomeActivity::class.java)
+        startActivity(intent)
     }
-
-//    public override fun onStart() {
-//        super.onStart()
-//        val currentUser = auth.currentUser
-//        if(currentUser != null) {
-//            reload()
-//        }
-//    }
 }

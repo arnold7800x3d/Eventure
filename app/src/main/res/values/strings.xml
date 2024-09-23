@@ -12,4 +12,6 @@
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
     <string name="search">Search</string>
+    <string name="registered_events">Registered Events</string>
+    <string name="reports">Generate reports</string>
 </resources>

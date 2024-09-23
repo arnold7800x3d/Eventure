@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "518600812516",
+    "project_id": "eventure-96c2f",
+    "storage_bucket": "eventure-96c2f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:518600812516:android:a9fbd0902071ca60d009f1",
+        "android_client_info": {
+          "package_name": "com.example.eventure"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyByGFDV48YELXrmmYIaFhaFXUx4iM6z0Fw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
