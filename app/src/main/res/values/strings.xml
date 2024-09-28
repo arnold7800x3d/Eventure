@@ -14,4 +14,10 @@
     <string name="search">Search</string>
     <string name="registered_events">Registered Events</string>
     <string name="reports">Generate reports</string>
+    <string name="title_profile">Profile</string>
+    <string name="title_activity_home">HomeActivity</string>
+    <string name="upcoming_events">Upcoming Events</string>
+    <string name="enter_your_name">Enter your name</string>
+    <string name="set_profile_picture">Set Profile Picture</string>
+    <string name="save_profile">Save Profile</string>
 </resources>
