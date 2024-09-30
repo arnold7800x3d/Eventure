@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/organizer_nav_graph"
+    app:startDestination="@id/organizerHomeFragment">
+
+    <fragment
+        android:id="@+id/organizerHomeFragment"
+        android:name="com.example.eventure.fragments.OrganizerHomeFragment"
+        android:label="OrganizerHomeFragment" >
+        <action
+            android:id="@+id/action_organizerHomeFragment_to_organizerProfileFragment"
+            app:destination="@id/organizerProfileFragment" />
+        <action
+            android:id="@+id/action_organizerHomeFragment_to_createEventFragment"
+            app:destination="@id/createEventFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/organizerProfileFragment"
+        android:name="com.example.eventure.fragments.OrganizerProfileFragment"
+        android:label="OrganizerProfileFragment" >
+        <action
+            android:id="@+id/action_organizerProfileFragment_to_organizerHomeFragment"
+            app:destination="@id/organizerHomeFragment" />
+        <action
+            android:id="@+id/action_organizerProfileFragment_to_eventDetailsFragment"
+            app:destination="@id/eventDetailsFragment" />
+        <action
+            android:id="@+id/action_organizerProfileFragment_to_editEventFragment"
+            app:destination="@id/editEventFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/createEventFragment"
+        android:name="com.example.eventure.fragments.CreateEventFragment"
+        android:label="CreateEventFragment" >
+        <action
+            android:id="@+id/action_createEventFragment_to_organizerHomeFragment"
+            app:destination="@id/organizerHomeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/eventDetailsFragment"
+        android:name="com.example.eventure.fragments.EventDetailsFragment"
+        android:label="EventDetailsFragment" />
+    <fragment
+        android:id="@+id/editEventFragment"
+        android:name="com.example.eventure.fragments.EditEventFragment"
+        android:label="EditEventFragment" />
+</navigation>

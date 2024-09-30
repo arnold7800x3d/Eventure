@@ -15,16 +15,19 @@ import com.example.eventure.databinding.ActivityLoginBinding
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
+import com.google.firebase.firestore.FirebaseFirestore
 
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
+    private lateinit var db: FirebaseFirestore
     lateinit var binding: ActivityLoginBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
         auth = Firebase.auth
+        db = FirebaseFirestore.getInstance()
 
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -49,15 +52,15 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    // Existing user login
-    private fun loginWithEmailAndPassword(email:String, password: String) {
+    // User login
+    private fun loginWithEmailAndPassword(email: String, password: String) {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "signInWithEmail:success")
                     val user = auth.currentUser
-                    goToHome()
+                    user?.let { fetchUserRole(it.uid) } // Fetch user role from Firestore
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "signInWithEmail:failure", task.exception)
@@ -76,13 +79,44 @@ class LoginActivity : AppCompatActivity() {
         // Check if user is signed in (non-null) and update UI accordingly.
         val currentUser = auth.currentUser
         if (currentUser != null) {
-            goToHome()
+            fetchUserRole(currentUser.uid) // Fetch user role if already signed in
         }
     }
 
-    //Navigate to home screen
-    private fun goToHome() {
-        val intent = Intent(this, HomeActivity::class.java)
-        startActivity(intent)
+    // Fetch user role from Firestore and navigate to the appropriate home screen
+    private fun fetchUserRole(userId: String) {
+        db.collection("users").document(userId).get()
+            .addOnSuccessListener { document ->
+                if (document != null && document.exists()) {
+                    val role = document.getString("role")
+                    when (role) {
+                        "Attendee" -> {
+                            val intent = Intent(this, AttendeeHomeActivity::class.java)
+                            startActivity(intent)
+                            finish()
+                        }
+                        "Organizer" -> {
+                            val intent = Intent(this, OrganizerHomeActivity::class.java)
+                            startActivity(intent)
+                            finish()
+                        }
+//                        "Administrator" -> {
+//                            val intent = Intent(this, AdministratorHomeActivity::class.java)
+//                            startActivity(intent)
+//                            finish()
+//                        }
+                        else -> {
+                            Toast.makeText(this, "Unknown role: $role", Toast.LENGTH_SHORT).show()
+                            Log.e(TAG, "Unknown role: $role")
+                        }
+                    }
+                } else {
+                    Log.d(TAG, "No such document")
+                    Toast.makeText(this, "No user data found", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error fetching user role", e)
+            }
     }
 }

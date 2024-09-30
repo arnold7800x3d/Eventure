@@ -8,7 +8,6 @@
     android:layout_height="match_parent"
     tools:context=".fragments.HomeFragment">
 
-
     <SearchView
         android:id="@+id/searchView"
         android:layout_width="256dp"
