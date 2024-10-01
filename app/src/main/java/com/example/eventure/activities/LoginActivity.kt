@@ -14,6 +14,7 @@ import com.example.eventure.R
 import com.example.eventure.databinding.ActivityLoginBinding
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -62,13 +63,35 @@ class LoginActivity : AppCompatActivity() {
                     val user = auth.currentUser
                     user?.let { fetchUserRole(it.uid) } // Fetch user role from Firestore
                 } else {
-                    // If sign in fails, display a message to the user.
-                    Log.w(TAG, "signInWithEmail:failure", task.exception)
-                    Toast.makeText(
-                        baseContext,
-                        "Authentication failed.",
-                        Toast.LENGTH_LONG,
-                    ).show()
+                    val errorCode = (task.exception as FirebaseAuthException).errorCode
+                    Log.e(TAG, "Error Code: $errorCode")
+
+                    when (errorCode) {
+                        "ERROR_INVALID_EMAIL" -> {
+                            Toast.makeText(
+                                this,
+                                "The email address is badly formatted.",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+
+                        "ERROR_WRONG_PASSWORD" -> {
+                            Toast.makeText(this, "The password is incorrect.", Toast.LENGTH_LONG)
+                                .show()
+                        }
+
+                        "ERROR_USER_NOT_FOUND" -> {
+                            Toast.makeText(
+                                this,
+                                "There is no user corresponding to this identifier.",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+
+                        else -> {
+                            Toast.makeText(this, "Authentication failed.", Toast.LENGTH_LONG).show()
+                        }
+                    }
                 }
             }
     }

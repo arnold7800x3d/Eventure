@@ -12,6 +12,9 @@
         <action
             android:id="@+id/action_homeFragment_to_profileFragment"
             app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_eventRegistrationFragment"
+            app:destination="@id/eventRegistrationFragment" />
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
@@ -22,4 +25,8 @@
             android:id="@+id/action_profileFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/eventRegistrationFragment"
+        android:name="com.example.eventure.fragments.EventRegistrationFragment"
+        android:label="EventRegistrationFragment" />
 </navigation>
