@@ -13,6 +13,7 @@ import androidx.databinding.DataBindingUtil
 import com.example.eventure.R
 import com.example.eventure.databinding.ActivityLoginBinding
 import com.google.firebase.Firebase
+import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.auth
@@ -63,34 +64,35 @@ class LoginActivity : AppCompatActivity() {
                     val user = auth.currentUser
                     user?.let { fetchUserRole(it.uid) } // Fetch user role from Firestore
                 } else {
-                    val errorCode = (task.exception as FirebaseAuthException).errorCode
-                    Log.e(TAG, "Error Code: $errorCode")
-
-                    when (errorCode) {
-                        "ERROR_INVALID_EMAIL" -> {
-                            Toast.makeText(
-                                this,
-                                "The email address is badly formatted.",
-                                Toast.LENGTH_LONG
-                            ).show()
+                    // Handle exceptions
+                    try {
+                        throw task.exception!!
+                    } catch (e: FirebaseAuthException) {
+                        val errorCode = e.errorCode
+                        Log.e(TAG, "Error Code: $errorCode")
+                        // Handle FirebaseAuthException errors as before
+                        when (errorCode) {
+                            "ERROR_INVALID_EMAIL" -> {
+                                Toast.makeText(this, "The email address is badly formatted.", Toast.LENGTH_LONG).show()
+                            }
+                            "ERROR_WRONG_PASSWORD" -> {
+                                Toast.makeText(this, "The password is incorrect.", Toast.LENGTH_LONG).show()
+                            }
+                            "ERROR_USER_NOT_FOUND" -> {
+                                Toast.makeText(this, "There is no user corresponding to this identifier.", Toast.LENGTH_LONG).show()
+                            }
+                            else -> {
+                                Toast.makeText(this, "Authentication failed.", Toast.LENGTH_LONG).show()
+                            }
                         }
-
-                        "ERROR_WRONG_PASSWORD" -> {
-                            Toast.makeText(this, "The password is incorrect.", Toast.LENGTH_LONG)
-                                .show()
-                        }
-
-                        "ERROR_USER_NOT_FOUND" -> {
-                            Toast.makeText(
-                                this,
-                                "There is no user corresponding to this identifier.",
-                                Toast.LENGTH_LONG
-                            ).show()
-                        }
-
-                        else -> {
-                            Toast.makeText(this, "Authentication failed.", Toast.LENGTH_LONG).show()
-                        }
+                    } catch (e: FirebaseNetworkException) {
+                        // Handle FirebaseNetworkException (network errors)
+                        Log.e(TAG, "Network error during login: ${e.message}")
+                        Toast.makeText(this, "Network error. Please check your connection.", Toast.LENGTH_SHORT).show()
+                    } catch (e: Exception) {
+                        // Handle other exceptions
+                        Log.e(TAG, "Unexpected error during login: ${e.message}")
+                        Toast.makeText(this, "An unexpected error occurred.", Toast.LENGTH_SHORT).show()
                     }
                 }
             }

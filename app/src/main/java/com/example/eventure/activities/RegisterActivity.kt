@@ -62,7 +62,7 @@ class RegisterActivity : AppCompatActivity() {
         binding.signUpButton2.setOnClickListener {
             createUser(
                 binding.emailSignUp.text.toString().trim(),
-                binding.passwordSignUp.toString().trim()
+                binding.passwordSignUp.text.toString().trim()
             )
         }
 
@@ -81,7 +81,7 @@ class RegisterActivity : AppCompatActivity() {
 
     private fun createUser(email:String, password: String) {
 //        val email = binding.emailSignUp.text.toString()
-//        val password = binding.passwordSignUp.toString()
+//        val password = binding.passwordSignUp.text.toString()
 
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) {task ->

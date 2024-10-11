@@ -65,7 +65,7 @@ class HomeFragment : Fragment() {
         db.collection("events")
             .get()
             .addOnSuccessListener { documents ->
-                eventsList.clear() // Clear old data
+                eventsList.clear() // Clear old data displayed for previously searched events
                 for (document in documents) {
                     val event = document.toObject(Event::class.java)
 
@@ -79,12 +79,12 @@ class HomeFragment : Fragment() {
 
                 eventsAdapter.notifyDataSetChanged() // Notify adapter of data change
 
-                // Check if the list is empty and show a message if so
+                // Check if the list is empty and display a message on if an event is found or not
                 if (eventsList.isEmpty()) {
                     Toast.makeText(context, "No events found.", Toast.LENGTH_SHORT).show()
                 }
             }
-            .addOnFailureListener { e ->
+            .addOnFailureListener { e -> // error message in case of error
                 Log.e("HomeFragment", "Error searching events: ${e.message}")
             }
     }
