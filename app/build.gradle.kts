@@ -74,4 +74,8 @@ dependencies {
     implementation ("com.google.android.gms:play-services-basement:18.2.1")
     implementation("com.google.android.gms:play-services-location:21.0.1")
 
+    //Google Maps for geolocation
+    implementation("com.google.android.gms:play-services-maps:17.0.1")
+
+
 }

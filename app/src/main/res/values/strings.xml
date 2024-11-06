@@ -51,4 +51,6 @@
     <string name="delete">Delete</string>
     <string name="event_details">Event Details</string>
     <string name="update_event">Update Event</string>
+    <string name="password_reset">Forgot your password? Click here to reset</string>
+    <string name="reset_button">Reset</string>
 </resources>

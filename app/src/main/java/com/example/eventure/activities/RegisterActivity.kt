@@ -49,7 +49,12 @@ class RegisterActivity : AppCompatActivity() {
         roleSpinner.adapter = adapter
 
         roleSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+            override fun onItemSelected(
+                parent: AdapterView<*>,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
                 selectedRole = parent.getItemAtPosition(position).toString()
             }
 
@@ -79,20 +84,22 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
 
-    private fun createUser(email:String, password: String) {
+    private fun createUser(email: String, password: String) {
 //        val email = binding.emailSignUp.text.toString()
 //        val password = binding.passwordSignUp.text.toString()
 
         auth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener(this) {task ->
+            .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     Log.d(TAG, "createUserWithEmail:success")
                     val user = auth.currentUser
                     storeUserRole(user)
                 } else {
                     Log.w(TAG, "createUserWithEmail:failure", task.exception)
-                    Toast.makeText(baseContext, "Account creation failed.",
-                        Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        baseContext, "Account creation failed.",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     updateUI(null)
                 }
             }
@@ -134,18 +141,22 @@ class RegisterActivity : AppCompatActivity() {
                                 startActivity(intent)
                                 finish()
                             }
+
                             "Organizer" -> {
                                 val intent = Intent(this, OrganizerHomeActivity::class.java)
                                 startActivity(intent)
                                 finish()
                             }
-//                            "Administrator" -> {
-//                                val intent = Intent(this, AdministratorHomeActivity::class.java)
-//                                startActivity(intent)
-//                                finish()
-//                            }
+
+                            "Administrator" -> {
+                                val intent = Intent(this, AdministratorHomeActivity::class.java)
+                                startActivity(intent)
+                                finish()
+                            }
+
                             else -> {
-                                Toast.makeText(this, "Unknown role: $role", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(this, "Unknown role: $role", Toast.LENGTH_SHORT)
+                                    .show()
                                 Log.e(TAG, "Unknown role: $role")
                             }
                         }

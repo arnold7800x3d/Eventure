@@ -4,8 +4,10 @@ import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -16,6 +18,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -47,11 +50,57 @@ class LoginActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        binding.passResetButton.setOnClickListener {
+            showPasswordResetDialog()
+        }
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+    }
+
+    private fun showPasswordResetDialog() {
+        // Dialog for entering email address
+        val emailInput = EditText(this).apply {
+            hint = "Enter your email"
+        }
+
+        AlertDialog.Builder(this)
+            .setTitle("Password Reset")
+            .setMessage("Enter your email to receive password reset instructions.")
+            .setView(emailInput)
+            .setPositiveButton("Send") { _, _ ->
+                val email = emailInput.text.toString().trim()
+                if (email.isNotEmpty()) {
+                    resetPassword(email)
+                } else {
+                    Toast.makeText(this, "Please enter your email", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun resetPassword(email: String) {
+        // Firebase password reset functionality
+        auth.sendPasswordResetEmail(email)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Toast.makeText(this, "Password reset email sent.", Toast.LENGTH_SHORT).show()
+                } else {
+                    val exception = task.exception
+                    if (exception is FirebaseAuthInvalidUserException) {
+                        // This error occurs when there's no account with this email
+                        Toast.makeText(this, "No account found with this email.", Toast.LENGTH_LONG).show()
+                    } else {
+                        // Other potential errors, like network issues
+                        Toast.makeText(this, "Error: ${exception?.message}", Toast.LENGTH_LONG).show()
+                    }
+                    Log.e("ResetPasswordError", "Failed to send reset email: ${exception?.message}")
+                }
+            }
     }
 
     // User login
@@ -73,26 +122,47 @@ class LoginActivity : AppCompatActivity() {
                         // Handle FirebaseAuthException errors as before
                         when (errorCode) {
                             "ERROR_INVALID_EMAIL" -> {
-                                Toast.makeText(this, "The email address is badly formatted.", Toast.LENGTH_LONG).show()
+                                Toast.makeText(
+                                    this,
+                                    "The email address is badly formatted.",
+                                    Toast.LENGTH_LONG
+                                ).show()
                             }
+
                             "ERROR_WRONG_PASSWORD" -> {
-                                Toast.makeText(this, "The password is incorrect.", Toast.LENGTH_LONG).show()
+                                Toast.makeText(
+                                    this,
+                                    "The password is incorrect.",
+                                    Toast.LENGTH_LONG
+                                ).show()
                             }
+
                             "ERROR_USER_NOT_FOUND" -> {
-                                Toast.makeText(this, "There is no user corresponding to this identifier.", Toast.LENGTH_LONG).show()
+                                Toast.makeText(
+                                    this,
+                                    "There is no user corresponding to this identifier.",
+                                    Toast.LENGTH_LONG
+                                ).show()
                             }
+
                             else -> {
-                                Toast.makeText(this, "Authentication failed.", Toast.LENGTH_LONG).show()
+                                Toast.makeText(this, "Authentication failed.", Toast.LENGTH_LONG)
+                                    .show()
                             }
                         }
                     } catch (e: FirebaseNetworkException) {
                         // Handle FirebaseNetworkException (network errors)
                         Log.e(TAG, "Network error during login: ${e.message}")
-                        Toast.makeText(this, "Network error. Please check your connection.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this,
+                            "Network error. Please check your connection.",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     } catch (e: Exception) {
                         // Handle other exceptions
                         Log.e(TAG, "Unexpected error during login: ${e.message}")
-                        Toast.makeText(this, "An unexpected error occurred.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "An unexpected error occurred.", Toast.LENGTH_SHORT)
+                            .show()
                     }
                 }
             }
@@ -120,16 +190,19 @@ class LoginActivity : AppCompatActivity() {
                             startActivity(intent)
                             finish()
                         }
+
                         "Organizer" -> {
                             val intent = Intent(this, OrganizerHomeActivity::class.java)
                             startActivity(intent)
                             finish()
                         }
-//                        "Administrator" -> {
-//                            val intent = Intent(this, AdministratorHomeActivity::class.java)
-//                            startActivity(intent)
-//                            finish()
-//                        }
+
+                        "Administrator" -> {
+                            val intent = Intent(this, AdministratorHomeActivity::class.java)
+                            startActivity(intent)
+                            finish()
+                        }
+
                         else -> {
                             Toast.makeText(this, "Unknown role: $role", Toast.LENGTH_SHORT).show()
                             Log.e(TAG, "Unknown role: $role")
