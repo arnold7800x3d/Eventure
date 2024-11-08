@@ -1,3 +1,5 @@
+import java.util.regex.Pattern.compile
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -67,15 +69,15 @@ dependencies {
     // When using the BoM, you don't specify versions in Firebase library dependencies
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore-ktx:25.1.0")
-    implementation ("com.google.firebase:firebase-storage")
+    implementation("com.google.firebase:firebase-storage")
 
     implementation("com.google.firebase:firebase-auth-ktx")
-    implementation ("com.google.android.gms:play-services-auth:20.5.0")
-    implementation ("com.google.android.gms:play-services-basement:18.2.1")
+    implementation("com.google.android.gms:play-services-auth:20.5.0")
+    implementation("com.google.android.gms:play-services-basement:18.2.1")
     implementation("com.google.android.gms:play-services-location:21.0.1")
 
     //Google Maps for geolocation
     implementation("com.google.android.gms:play-services-maps:17.0.1")
-
-
+    implementation ("com.github.bumptech.glide:glide:4.15.1")
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.15.1")
 }

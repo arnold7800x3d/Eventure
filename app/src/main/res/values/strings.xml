@@ -53,4 +53,11 @@
     <string name="update_event">Update Event</string>
     <string name="password_reset">Forgot your password? Click here to reset</string>
     <string name="reset_button">Reset</string>
+    <string name="track">Track</string>
+    <string name="manage">Manage</string>
+    <string name="profile_name">Name</string>
+    <string name="profile_email">Email</string>
+    <string name="set_profile_image">Set Profile Picture</string>
+    <string name="profile_organization">Organization</string>
+    <string name="set_profile">Save Profile</string>
 </resources>

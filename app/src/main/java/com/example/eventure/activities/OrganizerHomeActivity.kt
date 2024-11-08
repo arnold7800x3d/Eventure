@@ -40,8 +40,12 @@ class OrganizerHomeActivity : AppCompatActivity() {
                     navController.navigate(R.id.organizerHomeFragment) // Navigate to HomeFragment
                     true
                 }
-                R.id.profile -> {
+               R.id.profile -> {
                     navController.navigate(R.id.organizerProfileFragment) // Navigate to ProfileFragment
+                    true
+                }
+                R.id.track -> {
+                    navController.navigate(R.id.organizerTrackFragment)
                     true
                 }
                 else -> false

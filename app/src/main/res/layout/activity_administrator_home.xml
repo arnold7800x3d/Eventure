@@ -12,8 +12,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        layout_constraintBottom_toBottomOf="parent"
-        app:menu="@menu/bottom_navigation_menu"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:menu="@menu/admin_bottom_navigation_menu"
         tools:layout_editor_absoluteX="0dp" />
 
         <androidx.fragment.app.FragmentContainerView
