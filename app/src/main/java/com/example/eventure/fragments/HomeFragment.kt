@@ -25,6 +25,7 @@ class HomeFragment : Fragment() {
     private lateinit var searchView: SearchView
     private lateinit var eventsAdapter: EventsAdapterThree
     private val eventsList = mutableListOf<Event>()
+    private val allEventsList = mutableListOf<Event>() // Stores all events to filter search results
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,47 +49,56 @@ class HomeFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = eventsAdapter
 
+        // Load all events initially
+        loadAllEvents()
+
         // Set up search button click listener
         searchButton.setOnClickListener {
             val searchText = searchView.query.toString()
             if (searchText.isNotEmpty()) {
                 searchEvents(searchText)
             } else {
-                Toast.makeText(context, "Please enter a search term.", Toast.LENGTH_SHORT).show()
+                eventsList.clear()
+                eventsList.addAll(allEventsList) // Restore full list when search is empty
+                eventsAdapter.notifyDataSetChanged()
             }
         }
 
         return view
     }
 
-    private fun searchEvents(searchText: String) {
+    private fun loadAllEvents() {
         db.collection("events")
             .get()
             .addOnSuccessListener { documents ->
-                eventsList.clear() // Clear old data displayed for previously searched events
+                allEventsList.clear()
                 for (document in documents) {
                     val event = document.toObject(Event::class.java)
-
-                    // Check if the event matches the search criteria
-                    if (event.name.contains(searchText, ignoreCase = true) ||
-                        event.description.contains(searchText, ignoreCase = true) ||
-                        event.category.contains(searchText, ignoreCase = true)) {
-                        eventsList.add(event)
-                    }
+                    allEventsList.add(event) // Add all events to the master list
                 }
-
-                eventsAdapter.notifyDataSetChanged() // Notify adapter of data change
-
-                // Check if the list is empty and display a message on if an event is found or not
-                if (eventsList.isEmpty()) {
-                    Toast.makeText(context, "No events found.", Toast.LENGTH_SHORT).show()
-                }
+                eventsList.clear()
+                eventsList.addAll(allEventsList) // Initially display all events
+                eventsAdapter.notifyDataSetChanged()
             }
-            .addOnFailureListener { e -> // error message in case of error
-                Log.e("HomeFragment", "Error searching events: ${e.message}")
+            .addOnFailureListener { e ->
+                Log.e("HomeFragment", "Error loading events: ${e.message}")
+                Toast.makeText(context, "Failed to load events.", Toast.LENGTH_SHORT).show()
             }
     }
 
+    private fun searchEvents(searchText: String) {
+        eventsList.clear()
+        eventsList.addAll(allEventsList.filter { event ->
+            event.name.contains(searchText, ignoreCase = true) ||
+                    event.description.contains(searchText, ignoreCase = true) ||
+                    event.category.contains(searchText, ignoreCase = true)
+        })
+        eventsAdapter.notifyDataSetChanged()
+
+        if (eventsList.isEmpty()) {
+            Toast.makeText(context, "No events found.", Toast.LENGTH_SHORT).show()
+        }
+    }
 
     private fun registerForEvent(event: Event) {
         val bundle = Bundle().apply {
