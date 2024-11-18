@@ -50,20 +50,29 @@ class OrganizerTrackFragment : Fragment() {
     }
 
     private fun loadEvents() {
-        db.collection("events")
-            .get()
-            .addOnSuccessListener { documents ->
-                eventsList.clear()
-                for (document in documents) {
-                    val event = document.toObject(Event::class.java)
-                    eventsList.add(event)
+        val currentUser = FirebaseAuth.getInstance().currentUser
+
+        if (currentUser != null) {
+            val organizerId = currentUser.uid
+            db.collection("events")
+                .whereEqualTo("organizerId", organizerId) // Query events by organizerId
+                .get()
+                .addOnSuccessListener { documents ->
+                    eventsList.clear()
+                    for (document in documents) {
+                        val event = document.toObject(Event::class.java)
+                        eventsList.add(event)
+                    }
+                    eventsAdapter.notifyDataSetChanged() // Notify the adapter of data change
                 }
-                eventsAdapter.notifyDataSetChanged() // Notify the adapter of data change
-            }
-            .addOnFailureListener { e ->
-                Log.e("OrganizerTrackFragment", "Error loading events: ${e.message}")
-            }
+                .addOnFailureListener { e ->
+                    Log.e("OrganizerTrackFragment", "Error loading events: ${e.message}")
+                }
+        } else {
+            Log.e("OrganizerTrackFragment", "User is not authenticated.")
+        }
     }
+
 
     private fun viewEvent(event: Event) {
         val bundle = Bundle().apply {

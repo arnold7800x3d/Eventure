@@ -12,5 +12,16 @@
         <item>Organizer</item>
         <item>Administrator</item>
     </string-array>
+    <string-array name="event_category">
+        <item>AI/ML</item>
+        <item>Cybersecurity</item>
+        <item>Software Development</item>
+        <item>IoT</item>
+        <item>Engineering</item>
+        <item>Data Science</item>
+        <item>Computer Networking</item>
+        <item>Hackathon</item>
+        <item>Web3/Blockchain</item>
+    </string-array>
 </resources>
 

@@ -9,10 +9,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Spinner
 import android.widget.Toast
 import com.example.eventure.R
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -40,7 +44,7 @@ class CreateEventFragment : Fragment() {
 
         // Find UI elements
         val eventName: EditText = view.findViewById(R.id.eventName)
-        val eventCategory: EditText = view.findViewById(R.id.eventCategory)
+        val eventCategory: Spinner = view.findViewById(R.id.eventCategorySpinner)
         val eventLocation: EditText = view.findViewById(R.id.eventLocation3)
         val eventDate: EditText = view.findViewById(R.id.eventDate3)
         val maxAttendees: EditText = view.findViewById(R.id.maxAttendees)
@@ -54,22 +58,46 @@ class CreateEventFragment : Fragment() {
             pickImageFromGallery()
         }
 
+        val spinner: Spinner = view.findViewById(R.id.eventCategorySpinner)
+        ArrayAdapter.createFromResource(
+            requireContext(),
+            R.array.event_category,  // Reference to the string array
+            android.R.layout.simple_spinner_item
+        ).also { adapter ->
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            spinner.adapter = adapter
+        }
+
+        // Set a listener for when an item is selected in the spinner
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                // Handle the selected item (e.g., display a message or save selection)
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {
+                // Handle case where no item is selected
+            }
+        }
+
         // Handle the Create Event button click
         createEventButton.setOnClickListener {
             val name = eventName.text.toString().trim()
-            val category = eventCategory.text.toString().trim()
+            val category = eventCategory.selectedItem.toString().trim()
             val location = eventLocation.text.toString().trim()
             val date = eventDate.text.toString().trim()
             val attendees = maxAttendees.text.toString().trim()
             val deadline = registrationDeadline.text.toString().trim()
             val description = eventDescription.text.toString().trim()
 
-            if (name.isNotEmpty() && category.isNotEmpty() && location.isNotEmpty() &&
+            val currentUser = FirebaseAuth.getInstance().currentUser
+
+            if (currentUser != null && name.isNotEmpty() && category.isNotEmpty() && location.isNotEmpty() &&
                 date.isNotEmpty() && attendees.isNotEmpty() && deadline.isNotEmpty() && description.isNotEmpty()
             ) {
                 if (imageUri != null) {
                     // If an image is selected, upload it
                     uploadImageToFirebase(
+                        currentUser.uid,
                         name,
                         category,
                         location,
@@ -81,6 +109,7 @@ class CreateEventFragment : Fragment() {
                 } else {
                     // If no image is selected, create event without image URL
                     storeEventInFirestore(
+                        currentUser.uid,
                         name,
                         category,
                         location,
@@ -116,6 +145,7 @@ class CreateEventFragment : Fragment() {
 
     // Function to upload the image to Firebase Storage and store the event in Firestore
     private fun uploadImageToFirebase(
+        organizerId: String,
         name: String,
         category: String,
         location: String,
@@ -134,6 +164,7 @@ class CreateEventFragment : Fragment() {
                     // Get the download URL of the uploaded image
                     imageRef.downloadUrl.addOnSuccessListener { downloadUri ->
                         storeEventInFirestore(
+                            organizerId,
                             name,
                             category,
                             location,
@@ -157,6 +188,7 @@ class CreateEventFragment : Fragment() {
 
     // Function to store the event data in Firestore
     private fun storeEventInFirestore(
+        organizerId: String,
         name: String,
         category: String,
         location: String,
@@ -167,6 +199,7 @@ class CreateEventFragment : Fragment() {
         imageUrl: String? // Optional image URL
     ) {
         val eventData = hashMapOf(
+            "organizerId" to organizerId, // Add the organizer's UID
             "name" to name,
             "category" to category,
             "location" to location,

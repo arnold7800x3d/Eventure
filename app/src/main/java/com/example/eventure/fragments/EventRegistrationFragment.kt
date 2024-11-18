@@ -18,6 +18,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import android.location.Geocoder
 import android.location.Address
 import android.content.Context
+import com.google.firebase.auth.FirebaseAuth
 
 class EventRegistrationFragment : Fragment(), OnMapReadyCallback {
 
@@ -153,8 +154,10 @@ class EventRegistrationFragment : Fragment(), OnMapReadyCallback {
         val phone = attendeePhoneEditText.text.toString()
         val tickets = ticketSpinner.selectedItem.toString()
 
+        val userUID = FirebaseAuth.getInstance().currentUser?.uid
+
         // Validate input
-        if (name.isEmpty() || email.isEmpty() || phone.isEmpty()) {
+        if (name.isEmpty() || email.isEmpty() || phone.isEmpty() || userUID == null) {
             Toast.makeText(requireContext(), "Please fill in all fields", Toast.LENGTH_SHORT).show()
             return
         }
@@ -165,7 +168,8 @@ class EventRegistrationFragment : Fragment(), OnMapReadyCallback {
             "name" to name,
             "email" to email,
             "phone" to phone,
-            "tickets" to tickets
+            "tickets" to tickets,
+            "userUID" to userUID
         )
 
         // Store registration data in Firestore
@@ -173,7 +177,6 @@ class EventRegistrationFragment : Fragment(), OnMapReadyCallback {
             .add(registrationData)
             .addOnSuccessListener {
                 Toast.makeText(requireContext(), "Registration successful!", Toast.LENGTH_SHORT).show()
-                // Navigate back or clear fields if needed
                 requireActivity().onBackPressed()
             }
             .addOnFailureListener { e ->
