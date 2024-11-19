@@ -5,56 +5,48 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.eventure.R
+import com.example.eventure.adapterclass.EventsAdapterFive
+import com.example.eventure.dataclass.Event
+import com.google.firebase.firestore.FirebaseFirestore
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [AdministratorHomeFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class AdministratorHomeFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private lateinit var eventsRecyclerView: RecyclerView
+    private lateinit var eventsAdapter: EventsAdapterFive
+    private lateinit var db: FirebaseFirestore
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_administrator_home, container, false)
+        val view = inflater.inflate(R.layout.fragment_administrator_home, container, false)
+        eventsRecyclerView = view.findViewById(R.id.upcomingEventsRecyclerView)
+        eventsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        db = FirebaseFirestore.getInstance()
+
+        loadEvents()
+
+        return view
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment AdministratorHomeFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            AdministratorHomeFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    private fun loadEvents() {
+        db.collection("events")
+            .get()
+            .addOnSuccessListener { documents ->
+                val eventsList = mutableListOf<Event>()
+                for (document in documents) {
+                    val event = document.toObject(Event::class.java)
+                    eventsList.add(event)
                 }
+                eventsAdapter = EventsAdapterFive(eventsList)
+                eventsRecyclerView.adapter = eventsAdapter
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(context, "Failed to load events: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
 }

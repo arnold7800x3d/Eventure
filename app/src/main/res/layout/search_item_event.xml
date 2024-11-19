@@ -34,10 +34,10 @@
 
     <ImageView
         android:id="@+id/eventImage"
-        android:layout_width="118dp"
+        android:layout_width="109dp"
         android:layout_height="101dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/icon"
+        android:src="@drawable/baseline_account_circle_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -50,6 +50,6 @@
         android:text="@string/register"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.726"
+        app:layout_constraintHorizontal_bias="0.719"
         app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

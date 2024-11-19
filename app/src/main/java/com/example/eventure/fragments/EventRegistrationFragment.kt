@@ -155,6 +155,8 @@ class EventRegistrationFragment : Fragment(), OnMapReadyCallback {
         val tickets = ticketSpinner.selectedItem.toString()
 
         val userUID = FirebaseAuth.getInstance().currentUser?.uid
+        val eventDate = eventDateTextView.text.toString()
+        val eventLocation = eventLocationTextView.text.toString()
 
         // Validate input
         if (name.isEmpty() || email.isEmpty() || phone.isEmpty() || userUID == null) {
@@ -165,6 +167,8 @@ class EventRegistrationFragment : Fragment(), OnMapReadyCallback {
         // Create registration data
         val registrationData = hashMapOf(
             "eventName" to eventName,
+            "eventDate" to eventDate,
+            "eventLocation" to eventLocation,
             "name" to name,
             "email" to email,
             "phone" to phone,
@@ -184,6 +188,7 @@ class EventRegistrationFragment : Fragment(), OnMapReadyCallback {
                 Toast.makeText(requireContext(), "Registration failed.", Toast.LENGTH_SHORT).show()
             }
     }
+
 
     override fun onMapReady(googleMap: GoogleMap) {
         this.googleMap = googleMap

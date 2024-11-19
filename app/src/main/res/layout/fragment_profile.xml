@@ -16,7 +16,7 @@
             android:layout_height="121dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="36dp"
-            android:src="@drawable/icon"
+            android:src="@drawable/baseline_account_circle_24"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -24,21 +24,12 @@
             android:id="@+id/username"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="48dp"
-            android:layout_marginEnd="28dp"
+            android:layout_marginTop="36dp"
             android:ems="10"
             android:hint="@string/enter_your_name"
             android:inputType="text"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <Button
-            android:id="@+id/setProfilePicture"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="184dp"
-            android:text="@string/set_profile_picture"
+            app:layout_constraintHorizontal_bias="0.925"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -46,10 +37,10 @@
             android:id="@+id/saveProfile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="184dp"
-            android:layout_marginEnd="36dp"
+            android:layout_marginTop="172dp"
             android:text="@string/save_profile"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
@@ -67,12 +58,13 @@
             android:id="@+id/attendeeEmail2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="28dp"
+            android:layout_marginTop="28dp"
             android:ems="10"
             android:hint="@string/email_login"
             android:inputType="textEmailAddress"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.92"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/username" />
 
         <Button
@@ -89,13 +81,13 @@
             android:id="@+id/myEvents"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="232dp"
             android:text="@string/my_events"
             android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.02"
+            app:layout_constraintHorizontal_bias="0.05"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/setProfilePicture" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/registeredEventsRecyclerView"

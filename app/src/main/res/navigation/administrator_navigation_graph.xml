@@ -1,6 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/organizer_navigation_graph">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/organizer_navigation_graph"
+    app:startDestination="@id/administratorHomeFragment">
 
+    <fragment
+        android:id="@+id/administratorHomeFragment"
+        android:name="com.example.eventure.fragments.AdministratorHomeFragment"
+        android:label="fragment_administrator_home"
+        tools:layout="@layout/fragment_administrator_home" >
+        <action
+            android:id="@+id/action_administratorHomeFragment_to_administratorManageFragment"
+            app:destination="@id/administratorManageFragment" />
+        <action
+            android:id="@+id/action_administratorHomeFragment_to_administratorProfileFragment"
+            app:destination="@id/administratorProfileFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/eventDetailsFragment2"
+        android:name="com.example.eventure.fragments.EventDetailsFragment"
+        android:label="EventDetailsFragment" />
+    <fragment
+        android:id="@+id/administratorManageFragment"
+        android:name="com.example.eventure.fragments.AdministratorManageFragment"
+        android:label="fragment_administrator_manage"
+        tools:layout="@layout/fragment_administrator_manage" >
+        <action
+            android:id="@+id/action_administratorManageFragment_to_eventDetailsFragment2"
+            app:destination="@id/eventDetailsFragment2" />
+        <action
+            android:id="@+id/action_administratorManageFragment_to_administratorHomeFragment"
+            app:destination="@id/administratorHomeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/administratorProfileFragment"
+        android:name="com.example.eventure.fragments.AdministratorProfileFragment"
+        android:label="fragment_administrator_profile"
+        tools:layout="@layout/fragment_administrator_profile" >
+        <action
+            android:id="@+id/action_administratorProfileFragment_to_administratorHomeFragment"
+            app:destination="@id/administratorHomeFragment" />
+    </fragment>
 </navigation>

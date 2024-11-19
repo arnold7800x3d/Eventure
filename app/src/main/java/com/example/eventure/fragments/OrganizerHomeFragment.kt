@@ -20,7 +20,6 @@ class OrganizerHomeFragment : Fragment() {
 
     private lateinit var db: FirebaseFirestore
     private lateinit var eventNumberTextView: TextView
-    private lateinit var attendeeNumberTextView: TextView
     private lateinit var eventsRecyclerView: RecyclerView
     private lateinit var createEventButton: Button
 
@@ -38,7 +37,6 @@ class OrganizerHomeFragment : Fragment() {
 
         // Find UI elements
         eventNumberTextView = view.findViewById(R.id.eventNumber)
-        attendeeNumberTextView = view.findViewById(R.id.attendeeNumber)
         eventsRecyclerView = view.findViewById(R.id.recyclerView)
         createEventButton = view.findViewById(R.id.createEventButton)
 
@@ -70,7 +68,6 @@ class OrganizerHomeFragment : Fragment() {
 
                 // Update the event count and total attendees
                 eventNumberTextView.text = eventsList.size.toString()
-                attendeeNumberTextView.text = "0" // Assuming no attendees yet
             }
             .addOnFailureListener { e ->
                 Log.e("OrganizerHomeFragment", "Error loading events: ${e.message}")

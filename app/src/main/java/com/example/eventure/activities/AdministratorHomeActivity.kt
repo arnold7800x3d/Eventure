@@ -22,7 +22,7 @@ class AdministratorHomeActivity : AppCompatActivity() {
         }
 
         val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+            supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment
         val navController = navHostFragment.navController
 
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation_view3)
@@ -34,8 +34,12 @@ class AdministratorHomeActivity : AppCompatActivity() {
                     navController.navigate(R.id.homeFragment) // Navigate to HomeFragment
                     true
                 }
+                R.id.manage -> {
+                    navController.navigate(R.id.administratorManageFragment) // Navigate to ProfileFragment
+                    true
+                }
                 R.id.profile -> {
-                    navController.navigate(R.id.profileFragment) // Navigate to ProfileFragment
+                    navController.navigate(R.id.administratorProfileFragment) // Navigate to ProfileFragment
                     true
                 }
                 else -> false

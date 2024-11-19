@@ -43,7 +43,7 @@ class EventDetailsFragment : Fragment() {
         eventLocationTextView.text = eventLocation
         eventDescriptionTextView.text = eventDescription
 
-        registrationButton = view.findViewById(R.id.eventRegistrationButton)
+        //registrationButton = view.findViewById(R.id.eventRegistrationButton)
 
         // Initialize Firebase
         db = FirebaseFirestore.getInstance()
@@ -63,11 +63,11 @@ class EventDetailsFragment : Fragment() {
                     val userRole = document.getString("role")
 
                     // Check role and hide/show the registration button
-                    if (userRole == "attendee") {
-                        registrationButton.visibility = View.VISIBLE // Show button
-                    } else if (userRole == "organizer") {
-                        registrationButton.visibility = View.GONE // Hide button
-                    }
+//                    if (userRole == "attendee") {
+//                        registrationButton.visibility = View.VISIBLE // Show button
+//                    } else if (userRole == "organizer") {
+//                        registrationButton.visibility = View.GONE // Hide button
+//                    }
                 }
             }
             .addOnFailureListener { e ->
