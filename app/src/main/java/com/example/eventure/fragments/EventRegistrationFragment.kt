@@ -128,7 +128,7 @@ class EventRegistrationFragment : Fragment(), OnMapReadyCallback {
         // If the location is valid, update the map
         if (latLng != null) {
             googleMap.addMarker(MarkerOptions().position(latLng).title("Event Location"))
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 12f)) // Adjust zoom level as needed
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 12f))
         } else {
             Log.e("EventRegistrationFragment", "Event location not found")
         }

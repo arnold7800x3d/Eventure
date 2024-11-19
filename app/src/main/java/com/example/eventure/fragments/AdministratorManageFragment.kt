@@ -11,7 +11,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventure.R
-import com.example.eventure.adapterclass.EventsAdapterFive
 import com.example.eventure.adapterclass.EventsAdapterSix
 import com.example.eventure.dataclass.Event
 import com.google.firebase.firestore.FirebaseFirestore
@@ -61,7 +60,16 @@ class AdministratorManageFragment : Fragment() {
     }
 
     private fun navigateToDetails(event: Event) {
-        findNavController().navigate(R.id.action_administratorManageFragment_to_eventDetailsFragment2)
+        // Create a bundle and pass the event details
+        val bundle = Bundle().apply {
+            putString("eventName", event.name)
+            putString("eventDate", event.date)
+            putString("eventLocation", event.location)
+            putString("eventDescription", event.description)
+        }
+
+        // Navigate to EventDetailsFragment with the bundle
+        findNavController().navigate(R.id.action_administratorManageFragment_to_eventDetailsFragment2, bundle)
     }
 
     private fun deleteEvent(event: Event) {
@@ -94,6 +102,4 @@ class AdministratorManageFragment : Fragment() {
                 Toast.makeText(context, "Failed to delete event", Toast.LENGTH_SHORT).show()
             }
     }
-
-
 }

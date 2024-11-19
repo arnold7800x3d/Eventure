@@ -8,6 +8,7 @@ data class Event(
     val maxAttendees: Int = 0,
     val registrationDeadline: String = "",
     val description: String = "",
-    val imageUrl: String? = null
+    val imageUrl: String? = null,
+    var attendeeCount: Int = 0
 )
 

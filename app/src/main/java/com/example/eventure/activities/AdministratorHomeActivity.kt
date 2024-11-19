@@ -31,7 +31,7 @@ class AdministratorHomeActivity : AppCompatActivity() {
         bottomNavigationView.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.home -> {
-                    navController.navigate(R.id.homeFragment) // Navigate to HomeFragment
+                    navController.navigate(R.id.administratorHomeFragment) // Navigate to HomeFragment
                     true
                 }
                 R.id.manage -> {

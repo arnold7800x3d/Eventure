@@ -20,7 +20,11 @@
     <fragment
         android:id="@+id/eventDetailsFragment2"
         android:name="com.example.eventure.fragments.EventDetailsFragment"
-        android:label="EventDetailsFragment" />
+        android:label="EventDetailsFragment" >
+        <action
+            android:id="@+id/action_eventDetailsFragment2_to_administratorManageFragment"
+            app:destination="@id/administratorManageFragment" />
+    </fragment>
     <fragment
         android:id="@+id/administratorManageFragment"
         android:name="com.example.eventure.fragments.AdministratorManageFragment"
