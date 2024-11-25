@@ -1,4 +1,4 @@
-package com.example.eventure.fragments
+﻿package com.example.eventure.fragments
 
 import android.os.Bundle
 import android.util.Log
@@ -12,13 +12,16 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventure.R
 import com.example.eventure.adapterclass.EventsAdapterSix
+import com.example.eventure.adapterclass.UsersListAdapter
 import com.example.eventure.dataclass.Event
+import com.example.eventure.dataclass.User
 import com.google.firebase.firestore.FirebaseFirestore
 
 class AdministratorManageFragment : Fragment() {
 
     private lateinit var db: FirebaseFirestore
     private lateinit var eventsAdapter: EventsAdapterSix
+    private lateinit var usersAdapter: UsersListAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,6 +46,19 @@ class AdministratorManageFragment : Fragment() {
                 onDelete = { event -> deleteEvent(event) }
             )
             manageEventsRecyclerView.adapter = eventsAdapter
+        }
+
+        val manageUsersRecyclerView: RecyclerView =
+            view.findViewById(R.id.manageUsersRecyclerView)
+        manageUsersRecyclerView.layoutManager = LinearLayoutManager(context)
+
+        fetchUsers { users ->
+            usersAdapter = UsersListAdapter(
+                users.toMutableList(),
+                context = requireContext(),
+                onDelete = { user -> deleteUser(user) }
+            )
+            manageUsersRecyclerView.adapter = usersAdapter
         }
     }
 
@@ -100,6 +116,50 @@ class AdministratorManageFragment : Fragment() {
             .addOnFailureListener { e ->
                 Log.e("ManageEvents", "Error querying event", e)
                 Toast.makeText(context, "Failed to delete event", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun fetchUsers(callback: (List<User>) -> Unit) {
+        db.collection("users")
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                val users = querySnapshot.documents.mapNotNull { it.toObject(User::class.java) }
+                callback(users)
+            }
+            .addOnFailureListener { e ->
+                Log.e("ManageUsers", "Error fetching users", e)
+                Toast.makeText(context, "Failed to load users", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun deleteUser(user: User) {
+        db.collection("users")
+            .whereEqualTo("email", user.email) // Query by the email field
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                if (querySnapshot.documents.isNotEmpty()) {
+                    // Assume only one document per email
+                    val documentId = querySnapshot.documents[0].id
+                    db.collection("users").document(documentId)
+                        .delete()
+                        .addOnSuccessListener {
+                            Toast.makeText(context, "User deleted", Toast.LENGTH_SHORT).show()
+
+                            // Remove the deleted user from the current list and update the RecyclerView
+                            val updatedUsers = usersAdapter.usersList.filter { it.email != user.email }
+                            usersAdapter.updateUsers(updatedUsers)
+                        }
+                        .addOnFailureListener { e ->
+                            Log.e("ManageUsers", "Error deleting user", e)
+                            Toast.makeText(context, "Failed to delete user", Toast.LENGTH_SHORT).show()
+                        }
+                } else {
+                    Toast.makeText(context, "User not found", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.e("ManageUsers", "Error querying user", e)
+                Toast.makeText(context, "Failed to delete user", Toast.LENGTH_SHORT).show()
             }
     }
 }

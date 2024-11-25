@@ -1,4 +1,4 @@
-package com.example.eventure.adapterclass // Adjust the package name
+package com.example.eventure.adapterclass
 
 import android.view.LayoutInflater
 import android.view.View
@@ -13,7 +13,8 @@ class EventsAdapterTwo(
     private val eventsList: List<Event>,
     private val onViewClicked: (Event) -> Unit,
     private val onEditClicked: (Event) -> Unit,
-    private val onDeleteClicked: (Event) -> Unit // Passing the delete logic here
+    private val onDeleteClicked: (Event) -> Unit,
+    private val onViewAttendeesClicked: (Event) -> Unit // New callback for viewing attendees
 ) : RecyclerView.Adapter<EventsAdapterTwo.EventViewHolder>() {
 
     inner class EventViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -23,6 +24,7 @@ class EventsAdapterTwo(
         val viewEventButton: Button = itemView.findViewById(R.id.viewEventButton)
         val editEventButton: Button = itemView.findViewById(R.id.editEventButton)
         val deleteEventButton: Button = itemView.findViewById(R.id.deleteEventButton)
+        val viewAttendeesButton: Button = itemView.findViewById(R.id.viewAttendeesButton) // New button
 
         init {
             viewEventButton.setOnClickListener {
@@ -32,7 +34,10 @@ class EventsAdapterTwo(
                 onEditClicked(eventsList[adapterPosition])
             }
             deleteEventButton.setOnClickListener {
-                onDeleteClicked(eventsList[adapterPosition]) // Trigger delete
+                onDeleteClicked(eventsList[adapterPosition])
+            }
+            viewAttendeesButton.setOnClickListener {
+                onViewAttendeesClicked(eventsList[adapterPosition]) // Trigger attendees logic
             }
         }
     }
@@ -54,4 +59,3 @@ class EventsAdapterTwo(
         return eventsList.size
     }
 }
-

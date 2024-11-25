@@ -32,6 +32,9 @@
         <action
             android:id="@+id/action_organizerTrackFragment_to_editEventFragment"
             app:destination="@id/editEventFragment" />
+        <action
+            android:id="@+id/action_organizerTrackFragment_to_eventAttendeesFragment"
+            app:destination="@id/eventAttendeesFragment" />
     </fragment>
     <fragment
         android:id="@+id/createEventFragment"
@@ -57,5 +60,13 @@
         <action
             android:id="@+id/action_organizerProfileFragment_to_organizerHomeFragment"
             app:destination="@id/organizerHomeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/eventAttendeesFragment"
+        android:name="com.example.eventure.fragments.EventAttendeesFragment"
+        android:label="EventAttendeesFragment" >
+        <action
+            android:id="@+id/action_eventAttendeesFragment_to_organizerTrackFragment"
+            app:destination="@id/organizerTrackFragment" />
     </fragment>
 </navigation>

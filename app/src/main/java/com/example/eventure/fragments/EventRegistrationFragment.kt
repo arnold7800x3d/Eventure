@@ -173,14 +173,15 @@ class EventRegistrationFragment : Fragment(), OnMapReadyCallback {
             "email" to email,
             "phone" to phone,
             "tickets" to tickets,
-            "userUID" to userUID
+            "userUID" to userUID,
+            "reminderSent" to false
         )
 
         // Store registration data in Firestore
         db.collection("event_registrations")
             .add(registrationData)
             .addOnSuccessListener {
-                Toast.makeText(requireContext(), "Registration successful!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Registration successful! You will receive a reminder before the event.", Toast.LENGTH_SHORT).show()
                 requireActivity().onBackPressed()
             }
             .addOnFailureListener { e ->

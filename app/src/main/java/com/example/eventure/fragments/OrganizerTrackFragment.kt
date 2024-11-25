@@ -5,7 +5,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,7 +22,6 @@ class OrganizerTrackFragment : Fragment() {
     private val eventsList = mutableListOf<Event>()
     private lateinit var db: FirebaseFirestore
     private lateinit var auth: FirebaseAuth
-    private lateinit var organizersAttendees: TextView  // Reference to the TextView for total attendees
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,76 +29,60 @@ class OrganizerTrackFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_organizer_track, container, false)
 
-        // Initialize Firestore and FirebaseAuth
+        // Initialize Firebase Firestore and Auth
         db = FirebaseFirestore.getInstance()
         auth = FirebaseAuth.getInstance()
 
-        // Initialize RecyclerView
+        // Set up RecyclerView
         eventsRecyclerView = view.findViewById(R.id.eventsRecyclerView)
-        eventsAdapter = EventsAdapterTwo(eventsList, { event -> viewEvent(event) }, { event -> editEvent(event) }, { event -> deleteEvent(event) })
+        eventsAdapter = EventsAdapterTwo(
+            eventsList,
+            { event -> viewEvent(event) },
+            { event -> editEvent(event) },
+            { event -> deleteEvent(event) },
+            { event -> viewAttendees(event) }
+        )
         eventsRecyclerView.layoutManager = LinearLayoutManager(context)
         eventsRecyclerView.adapter = eventsAdapter
 
-        // Reference to the TextView for total attendees
-        organizersAttendees = view.findViewById(R.id.organizersAttendees)
-
-        // Load events from Firestore
+        // Load events for the organizer
         loadEvents()
 
         return view
     }
 
-    private fun loadEvents() {
-        val currentUser = FirebaseAuth.getInstance().currentUser
+    private fun viewAttendees(event: Event) {
+        val bundle = Bundle().apply {
+            putString("eventName", event.name) // Pass the event name to the attendee list fragment
+        }
 
+        findNavController().navigate(
+            R.id.action_organizerTrackFragment_to_eventAttendeesFragment,
+            bundle
+        )
+    }
+
+    private fun loadEvents() {
+        val currentUser = auth.currentUser
         if (currentUser != null) {
             val organizerId = currentUser.uid
             db.collection("events")
-                .whereEqualTo("organizerId", organizerId) // Query events by organizerId
+                .whereEqualTo("organizerId", organizerId)
                 .get()
                 .addOnSuccessListener { documents ->
                     eventsList.clear()
-                    var totalAttendees = 0  // Variable to hold total attendee count
-                    var processedEvents = 0  // Track number of processed events
+
+                    if (documents.isEmpty) {
+                        eventsAdapter.notifyDataSetChanged()
+                        return@addOnSuccessListener
+                    }
 
                     for (document in documents) {
                         val event = document.toObject(Event::class.java)
-                        val eventId = document.id
-
-                        // Query the events_registrations collection to check for name registrations
-                        db.collection("events_registrations")
-                            .whereEqualTo("eventName", event.name) // Ensure we get registrations for this event
-                            .get()
-                            .addOnSuccessListener { registrationDocs ->
-                                Log.d("OrganizerTrackFragment", "Found ${registrationDocs.size()} registrations for event: ${event.name}")
-
-                                // Count the number of registrations by checking if 'name' field exists
-                                registrationDocs.forEach { registrationDoc ->
-                                    val name = registrationDoc.getString("name")
-                                    if (!name.isNullOrEmpty()) {
-                                        // Count this as a registration if the name is present
-                                        totalAttendees++
-                                    }
-                                }
-
-                                // Add the event to the list
-                                event.attendeeCount = totalAttendees
-                                eventsList.add(event)
-
-                                requireActivity().runOnUiThread {
-                                    organizersAttendees.text = "Total Attendees: $totalAttendees"
-                                }
-
-                                processedEvents++
-
-                                if (processedEvents == documents.size()) {
-                                    eventsAdapter.notifyDataSetChanged()
-                                }
-                            }
-                            .addOnFailureListener { e ->
-                                Log.e("OrganizerTrackFragment", "Error counting registrations: ${e.message}")
-                            }
+                        eventsList.add(event)
                     }
+
+                    eventsAdapter.notifyDataSetChanged()
                 }
                 .addOnFailureListener { e ->
                     Log.e("OrganizerTrackFragment", "Error loading events: ${e.message}")
@@ -110,9 +92,6 @@ class OrganizerTrackFragment : Fragment() {
         }
     }
 
-
-
-
     private fun viewEvent(event: Event) {
         val bundle = Bundle().apply {
             putString("eventName", event.name)
@@ -120,28 +99,34 @@ class OrganizerTrackFragment : Fragment() {
             putString("eventLocation", event.location)
             putString("eventDescription", event.description)
         }
-
-        findNavController().navigate(R.id.action_organizerTrackFragment_to_eventDetailsFragment, bundle)
+        findNavController().navigate(
+            R.id.action_organizerTrackFragment_to_eventDetailsFragment,
+            bundle
+        )
     }
 
     private fun editEvent(event: Event) {
         val bundle = Bundle().apply {
-            putString("eventName", event.name) // Pass the event name to the edit fragment
+            putString("eventName", event.name)
         }
-
-        findNavController().navigate(R.id.action_organizerTrackFragment_to_editEventFragment, bundle)
+        findNavController().navigate(
+            R.id.action_organizerTrackFragment_to_editEventFragment,
+            bundle
+        )
     }
 
     private fun deleteEvent(event: Event) {
         db.collection("events")
-            .whereEqualTo("name", event.name) // Query Firestore for the event by name
+            .whereEqualTo("name", event.name)
             .get()
             .addOnSuccessListener { documents ->
                 for (document in documents) {
                     db.collection("events").document(document.id).delete()
                         .addOnSuccessListener {
-                            loadEvents() // Refresh the event list after deletion
+                            eventsList.remove(event)
+                            eventsAdapter.notifyDataSetChanged()
                             Log.d("OrganizerTrackFragment", "Deleted event: ${event.name}")
+                            loadEvents() // Reload events to update the list
                         }
                         .addOnFailureListener { e ->
                             Log.e("OrganizerTrackFragment", "Error deleting event: ${e.message}")
