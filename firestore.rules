@@ -1,0 +1,31 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Rule for the "attendeeProfiles" collection: Allow read and write if the user is authenticated
+    match /attendeeProfiles/{userUID} {
+      allow read, write: if request.auth != null && request.auth.uid == userUID;
+    }
+
+    // Default rule for all other documents: Allow read and write if the user is authenticated
+    match /{document=**} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // Rule for uploading and reading profile images: Allow if the user is authenticated
+    match /profile_pictures/{userUID}/{image} {
+      allow read, write: if request.auth != null && request.auth.uid == userUID;
+    }
+
+    // Default rule for all other storage files: Allow read, write if authenticated
+    match /{allPaths=**} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}
