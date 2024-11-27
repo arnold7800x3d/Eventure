@@ -81,4 +81,6 @@ dependencies {
     implementation("com.google.android.gms:play-services-maps:17.0.1")
     implementation ("com.github.bumptech.glide:glide:4.15.1")
     annotationProcessor ("com.github.bumptech.glide:compiler:4.15.1")
+
+    implementation ("com.itextpdf:itext7-core:7.2.4")
 }

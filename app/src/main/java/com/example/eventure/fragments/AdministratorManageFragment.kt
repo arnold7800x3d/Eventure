@@ -1,11 +1,15 @@
 ﻿package com.example.eventure.fragments
 
+import android.graphics.Paint
+import android.graphics.pdf.PdfDocument
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,7 +19,14 @@ import com.example.eventure.adapterclass.EventsAdapterSix
 import com.example.eventure.adapterclass.UsersListAdapter
 import com.example.eventure.dataclass.Event
 import com.example.eventure.dataclass.User
+import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreSettings
+import com.google.firebase.firestore.QuerySnapshot
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 
 class AdministratorManageFragment : Fragment() {
 
@@ -60,7 +71,81 @@ class AdministratorManageFragment : Fragment() {
             )
             manageUsersRecyclerView.adapter = usersAdapter
         }
+
+        val generateReportButton: Button = view.findViewById(R.id.reportsbutton2)
+        generateReportButton.setOnClickListener {
+            fetchAllDataAndGeneratePDF()
+        }
     }
+
+
+    private fun fetchAllDataAndGeneratePDF() {
+        db.firestoreSettings = FirebaseFirestoreSettings.Builder().build()
+
+        // List of tasks to fetch data
+        val tasks = mutableListOf<Task<QuerySnapshot>>()
+
+        // Add tasks for each collection you want to query
+        tasks.add(db.collection("events").get())
+        tasks.add(db.collection("users").get())
+
+        // Run the tasks in parallel and generate the PDF once all are completed
+        Tasks.whenAllComplete(tasks).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val dataToExport = StringBuilder()
+                tasks.forEachIndexed { index, t ->
+                    val collectionName = if (index == 0) "events" else "users"
+                    t.result?.documents?.forEach { document ->
+                        dataToExport.append("Collection: $collectionName\n")
+                        dataToExport.append("Document: ${document.id} => ${document.data}\n")
+                    }
+                }
+                generatePDF(dataToExport.toString())
+            } else {
+                Log.e("FetchAllData", "Error fetching data", task.exception)
+                Toast.makeText(context, "Failed to fetch data", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+
+    private fun generatePDF(data: String) {
+        val pdfDocument = PdfDocument()
+        val pageInfo = PdfDocument.PageInfo.Builder(595, 842, 1).create() // A4 size
+        val page = pdfDocument.startPage(pageInfo)
+
+        val canvas = page.canvas
+        val paint = Paint()
+        paint.textSize = 12f
+
+        val lines = data.split("\n")
+        var yPos = 20f
+
+        for (line in lines) {
+            canvas.drawText(line, 10f, yPos, paint)
+            yPos += 20f
+            if (yPos > pageInfo.pageHeight - 20) break // Avoid overflow
+        }
+
+        pdfDocument.finishPage(page)
+
+        // Save to the Downloads folder
+        val file = File(
+            requireContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
+            "FirestoreDataReport.pdf"
+        )
+
+        try {
+            FileOutputStream(file).use { pdfDocument.writeTo(it) }
+            Toast.makeText(context, "PDF saved to: ${file.absolutePath}", Toast.LENGTH_LONG).show()
+        } catch (e: IOException) {
+            Log.e("GeneratePDF", "Error writing PDF", e)
+            Toast.makeText(context, "Failed to save PDF", Toast.LENGTH_SHORT).show()
+        } finally {
+            pdfDocument.close()
+        }
+    }
+
 
     private fun fetchEvents(callback: (List<Event>) -> Unit) {
         db.collection("events")

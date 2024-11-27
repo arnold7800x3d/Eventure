@@ -16,8 +16,8 @@ firebase_admin.initialize_app(cred)
 db = firestore.client()
 
 # Gmail credentials
-GMAIL_EMAIL = "arnold.7800x3d@gmail.com" 
-GMAIL_PASSWORD = "cjrj uhrs yoon cmoc"  # Replace with your actual Gmail app password
+GMAIL_EMAIL = "mercy.ngaya@strathmore.edu" 
+GMAIL_PASSWORD = "ofzb vrvv rhxv fgit "  # Replace with your actual Gmail app password
 
 # Function to send email reminders
 def send_email(to_email, subject, body):
@@ -40,7 +40,7 @@ def send_email(to_email, subject, body):
 
 # Cloud Function to send reminders for events happening in one week
 @app.route('/send_event_reminders', methods=['POST'])
-def send_event_reminders():
+def send_event_reminders(request=None):  # Accept the request argument
     try:
         now = datetime.datetime.now()
         next_week = now + datetime.timedelta(days=7)
