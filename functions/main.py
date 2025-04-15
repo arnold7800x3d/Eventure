@@ -16,8 +16,8 @@ firebase_admin.initialize_app(cred)
 db = firestore.client()
 
 # Gmail credentials
-GMAIL_EMAIL = "mercy.ngaya@strathmore.edu" 
-GMAIL_PASSWORD = "ofzb vrvv rhxv fgit "  # Replace with your actual Gmail app password
+GMAIL_EMAIL = "" 
+GMAIL_PASSWORD = " "  # Replace with your actual Gmail app password
 
 # Function to send email reminders
 def send_email(to_email, subject, body):
